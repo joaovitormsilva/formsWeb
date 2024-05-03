@@ -130,7 +130,11 @@ function validarSenha(senha) {
    // const regexNome = new RegExp(nome.target.value, 'i');
     // const regexAno = new RegExp(ano.target.value, 'g');
 
-    if(senhaArrumada.length >= 6 && senhaArrumada.length <= 20 && regexLetra.test(senhaArrumada) && regexEspecial.test(senhaArrumada) && regexNumero.test(senhaArrumada)){
+    if(nome.value.split(' ').some(x => senhaArrumada.includes(x)) || senhaArrumada.includes(ano.value)){
+        senhaHelp.textContent = "Senha não pode ser igual ao nome ou ano";
+        senhaHelp.style.color="red";
+    }
+    else if(senhaArrumada.length >= 6 && senhaArrumada.length <= 20 && regexLetra.test(senhaArrumada) && regexEspecial.test(senhaArrumada) && regexNumero.test(senhaArrumada)){
         if(senhaArrumada.length < 8){
             return 'fraca';
         } else if(senhaArrumada.length >= 8 && senhaArrumada.length <= 12){
