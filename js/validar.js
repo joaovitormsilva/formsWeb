@@ -6,18 +6,29 @@ var ano = document.querySelector("#inputYear");
 var anoHelp = document.querySelector("#inputYearHelp");
 var email = document.querySelector('#inputEmail');
 var emailHelp = document.querySelector("#inputEmailHelp");
-
 var senha = document.querySelector('#inputPassword');
 var senhaHelp = document.querySelector("#inputPasswordHelp");
-
 var barrinha = document.querySelector("#passStrengthMeter");
+
+var form = document.querySelector('#singleForm');
+var botaoEnviar = document.querySelector("#btnEnviar");
+var mensagem = document.querySelector("#inputResult");
+
 
 /*declarando o evento listener para o campos de texto do form. 
 Uma vez o foco do campo inputName mude, será chamada a função validarNome*/
 nome.addEventListener('focusout', validarNome);
 email.addEventListener('focusout',validarEmail);
+ano.addEventListener('focusout', () => {
+    const anoHelp = document.getElementById('inputYearHelp'); // Elemento de ajuda para o ano
+    validarAno(ano, anoHelp); // Chamada da função validarAno
+});
 senha.addEventListener('blur', () => {
         const nivelSeguranca = validarSenha(senha);
+        console.log(nivelSeguranca);
+        if(nivelSeguranca === "invalida"){
+            passStrengthMeter.value = 0;
+        }
         if (nivelSeguranca === 'fraca') {
             senhaHelp.textContent = 'Senha fraca';
             senhaHelp.style.color = 'red';
@@ -52,7 +63,7 @@ function validarNome(nome){
   if (!regexNome.test(nome.target.value)) {
    // if(nome.target.value.length()<6 && !/^[a-zA-Z]+$/.test(nome.target.value)){
         //muda o conteúdo e o estilo do objeto nomeHelp que referencia o elemento html com id=inputNameHelp
-        nomeHelp.textContent = "Formato de nome inválido"; 
+        nomeHelp.textContent = "Nome inválido"; 
         nomeHelp.style.color="red";
     }
     else{
@@ -67,42 +78,38 @@ Uma vez o foco seja mudado, será chamada a função validarNome*/
 //declaração de função de forma anônima usando uma expressão de função de seta =>
 
 
-
-ano.addEventListener('focusout', () => {
-    const regexAno = /^[0-9]{4}$/; // Expressão regular para validar um ano no formato yyyy
-  
-    const anoTrimado = ano.value.trim(); // Remover espaços em branco antes e depois do ano
-  
-    if (anoTrimado.match(regexAno) == null) {
-        anoHelp.textContent = "Formato de ano inválido";
-        anoHelp.style.color="red"; // Retorna mensagem de erro se o ano não atender ao formato yyyy
-    }
-    else{
-        //objeto Date
-        var date = new Date();
-        //obtem o ano atual
-        console.log(date.getFullYear()); 
-        
-        if( parseInt(anoTrimado) > parseInt(date.getFullYear()-2) ){
-            //muda o conteúdo e o estilo do objeto nomeHelp que referencia o elemento html com id=inputYearHelp
-            anoHelp.textContent = `Ano inválido. O ano não pode ser maior que ${date.getFullYear()-2}.`;
-            anoHelp.style.color="red";
+    function validarAno(ano, anoHelp) {
+        const regexAno = /^[0-9]{4}$/; // Expressão regular para validar um ano no formato yyyy
+    
+        const anoTrimado = ano.value.trim(); // Remover espaços em branco antes e depois do ano
+    
+        if (anoTrimado.match(regexAno) == null) {
+            anoHelp.textContent = "Ano inválido";
+            anoHelp.style.color = "red"; // Retorna mensagem de erro se o ano não atender ao formato yyyy
+            return false; // Retorna false se o ano for inválido
+        } else {
+            //objeto Date
+            var date = new Date();
+            //obtem o ano atual
+            console.log(date.getFullYear());
+    
+            if (parseInt(anoTrimado) > parseInt(date.getFullYear() - 2)) {
+                //muda o conteúdo e o estilo do objeto nomeHelp que referencia o elemento html com id=inputYearHelp
+                anoHelp.textContent = `Ano inválido`;
+                anoHelp.style.color = "red";
+                return false; // Retorna false se o ano for inválido
+            } else if (parseInt(anoTrimado) < parseInt(date.getFullYear()) - 124) {
+                //muda o conteúdo e o estilo do objeto nomeHelp que referencia o elemento html com id=inputYearHelp
+                anoHelp.textContent = `Ano inválido`;
+                anoHelp.style.color = "red";
+                return false; // Retorna false se o ano for inválido
+            } else {
+                anoHelp.textContent = "";
+                return true; // Retorna true se o ano for válido
+            }
         }
-
-        else if( parseInt(anoTrimado) < parseInt(date.getFullYear())-124 ){
-            //muda o conteúdo e o estilo do objeto nomeHelp que referencia o elemento html com id=inputYearHelp
-           anoHelp.textContent = `Ano inválido. O ano não pode ser menor que ${date.getFullYear()-124}.`;
-           anoHelp.style.color="red";
-       }
-        else{
-            anoHelp.textContent = "";
-        }
-        return ""; // Retorna uma string vazia se o ano for válido
-
+    
     }
-}
-);
-
 function validarEmail(email){
    
     console.log(email.target.value);
@@ -111,7 +118,7 @@ function validarEmail(email){
         emailHelp.textContent = ``;
     }
     else{
-        emailHelp.textContent = "formato de email errado";
+        emailHelp.textContent = "Formato de email inválido";
         emailHelp.style.color="red";
 
     }
@@ -126,12 +133,49 @@ function validarSenha(senha) {
     // Verifica se a senha atende aos critérios especificados
     const regexLetra = /[a-zA-Z]/;
     const regexNumero = /[0-9]/;
-    const regexEspecial = /[@#%&!+]/;
+                            
+    const regexEspecial = /[@#$%^&!+*()-_]/;
    // const regexNome = new RegExp(nome.target.value, 'i');
     // const regexAno = new RegExp(ano.target.value, 'g');
+    
+    if (nome.value.trim() !== '') {
+        // Verifica se a senha contém o nome ou o ano de nascimento do usuário
+        if (senhaArrumada.includes(nome.value) || senhaArrumada.includes(ano.value)) {
+            senhaHelp.textContent = "Senha inválida";
+            senhaHelp.style.color = "red";
+            return 'invalida';
+        }
+    }
 
+
+    if(senhaArrumada.length >= 6 && senhaArrumada.length <= 20 && regexLetra.test(senhaArrumada) && regexEspecial.test(senhaArrumada) && regexNumero.test(senhaArrumada)){
+        const especiais = (senhaArrumada.match(regexEspecial) || []).length;
+        const numeros = (senhaArrumada.match(regexNumero) || []).length;
+        const maiusculas = (senhaArrumada.match(/[A-Z]/g) || []).length;
+        
+        if(senhaArrumada.length < 8){
+            senhaHelp.textContent = 'Senha fraca';
+            senhaHelp.style.color = 'red';
+            return 'fraca';
+        }
+        else if (senhaArrumada.length >= 8 && senhaArrumada.length <= 12 && maiusculas > 0) {
+            senhaHelp.textContent = 'Senha moderada';
+            senhaHelp.style.color = 'orange';
+            return 'moderada';
+        } else if (senhaArrumada.length > 12 && especiais > 1 && numeros > 1 && maiusculas > 1) {
+            senhaHelp.textContent = 'Senha forte';
+            senhaHelp.style.color = 'green';
+            return 'forte';
+        }
+    }
+    senhaHelp.textContent = "Senha inválida";
+    senhaHelp.style.color = "red";
+    return 'invalida';
+
+}
+    /*
     if(nome.value.split(' ').some(x => senhaArrumada.includes(x)) || senhaArrumada.includes(ano.value)){
-        senhaHelp.textContent = "Senha não pode ser igual ao nome ou ano";
+        senhaHelp.textContent = "Senha inválida";
         senhaHelp.style.color="red";
     }
     else if(senhaArrumada.length >= 6 && senhaArrumada.length <= 20 && regexLetra.test(senhaArrumada) && regexEspecial.test(senhaArrumada) && regexNumero.test(senhaArrumada)){
@@ -154,4 +198,22 @@ function validarSenha(senha) {
         senhaHelp.style.color="red";
     }
 
-}
+    */
+
+
+
+    botaoEnviar.addEventListener('click', () =>{
+            if((nomeHelp.textContent=== '' && anoHelp.textContent === '' && emailHelp
+                .textContent === '' && senhaHelp.textContent !== 'Senha inválida') == true
+            ){
+                mensagem.textContent = 'Seus dados foram registrados';
+                mensagem.style.color="green";
+
+            }
+            else{
+                mensagem.textContent = 'Seus dados não foram registrados';
+                mensagem.style.color="red";
+            }
+
+
+    });
