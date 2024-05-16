@@ -173,38 +173,14 @@ function validarSenha(senha) {
     return 'invalida';
 
 }
-    /*
-    if(nome.value.split(' ').some(x => senhaArrumada.includes(x)) || senhaArrumada.includes(ano.value)){
-        senhaHelp.textContent = "Senha inválida";
-        senhaHelp.style.color="red";
-    }
-    else if(senhaArrumada.length >= 6 && senhaArrumada.length <= 20 && regexLetra.test(senhaArrumada) && regexEspecial.test(senhaArrumada) && regexNumero.test(senhaArrumada)){
-        if(senhaArrumada.length < 8){
-            return 'fraca';
-        } else if(senhaArrumada.length >= 8 && senhaArrumada.length <= 12){
-            return 'moderada';
-        } else if(senhaArrumada.length > 12){
-            const especiais = (senhaArrumada.match(/[@#%&!+]/g) || []).length;
-            const numeros = (senhaArrumada.match(/[0-9]/g) || []).length;
-            const maiusculas = (senhaArrumada.match(/[A-Z]/g) || []).length;
-
-            if (especiais > 1 && numeros > 1 && maiusculas > 1) {
-                return 'forte';
-            }
-        }
-    }
-    else{
-        senhaHelp.textContent = "Senha inválida";
-        senhaHelp.style.color="red";
-    }
-
-    */
 
 
 
     botaoEnviar.addEventListener('click', () =>{
+
+        if (nome.value.trim() !== '' && ano.value !== '' && email.value !== '' && senha.value !== '') {
             if((nomeHelp.textContent=== '' && anoHelp.textContent === '' && emailHelp
-                .textContent === '' && senhaHelp.textContent !== 'Senha inválida') == true
+            .textContent === '' && senhaHelp.textContent !== 'Senha inválida') == true
             ){
                 mensagem.textContent = 'Seus dados foram registrados';
                 mensagem.style.color="green";
@@ -214,6 +190,10 @@ function validarSenha(senha) {
                 mensagem.textContent = 'Seus dados não foram registrados';
                 mensagem.style.color="red";
             }
-
-
+        }
+        else{
+            mensagem.textContent = 'Seus dados não foram registrados';
+            mensagem.style.color="red";
+        }
+      
     });
